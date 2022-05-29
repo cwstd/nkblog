@@ -53,7 +53,18 @@
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 			<version>2.0.1</version>
 		</dependency>
-
+<!--		邮箱包-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+			<version>2.1.5.RELEASE</version>
+		</dependency>
+		<!--		验证码包-->
+		<dependency>
+			<groupId>com.github.penggle</groupId>
+			<artifactId>kaptcha</artifactId>
+			<version>2.3.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>

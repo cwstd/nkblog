@@ -1,16 +1,23 @@
 package com.nowcoder.community.controller;
 
+import com.google.code.kaptcha.Producer;
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.Page;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.DiscussPostService;
 import com.nowcoder.community.service.UserService;
+import com.nowcoder.community.util.MailClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +32,9 @@ public class HomeController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private Producer kaptchaProduce;
 
     @RequestMapping(path = "/index", method = RequestMethod.GET)
     public String getIndexPage(Model model, Page page) {
@@ -47,6 +57,20 @@ public class HomeController {
         }
         model.addAttribute("discussPosts", discussPosts);
         return "index";
+    }
+    @RequestMapping(path = "/kaptcha", method = RequestMethod.GET)
+    public void getKaptcha(HttpServletResponse response, HttpSession session){
+        String text = kaptchaProduce.createText();
+        BufferedImage image = kaptchaProduce.createImage(text);
+        session.setAttribute("kaptcha",text);
+        response.setContentType("image/png");
+        try{
+            ServletOutputStream outputStream = response.getOutputStream();
+            ImageIO.write(image,"png",outputStream);
+        }catch (Exception e){
+            System.out.println("发送图像失败"+e);
+        }
+
     }
 
 }
