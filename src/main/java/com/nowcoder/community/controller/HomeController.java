@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/home")
+
 public class HomeController {
 
     @Autowired
@@ -56,7 +56,7 @@ public class HomeController {
             }
         }
         model.addAttribute("discussPosts", discussPosts);
-        return "index";
+        return "/index";
     }
     @RequestMapping(path = "/kaptcha", method = RequestMethod.GET)
     public void getKaptcha(HttpServletResponse response, HttpSession session){

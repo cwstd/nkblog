@@ -5,14 +5,30 @@ import com.nowcoder.community.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service
-public class UserService {
+import java.util.Map;
 
-    @Autowired
-    private UserMapper userMapper;
 
-    public User findUserById(int id) {
-        return userMapper.selectById(id);
-    }
+public interface UserService {
 
+    /**
+     * 查询用户
+     * @param id
+     * @return
+     */
+    User findUserById(int id);
+
+    /**
+     * 注册功能
+     * @param user
+     * @return
+     */
+    Map<String,Object> register(User user);
+
+    /**
+     * 激活账户
+     * @param userId
+     * @param activateCode
+     * @return
+     */
+    int activateUser(int userId, String activateCode);
 }

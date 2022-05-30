@@ -13,7 +13,7 @@ import javax.mail.internet.MimeMessage;
 
 
 @Component
-public class MailClient {
+public  class MailClient {
     private static final Logger logger= LoggerFactory.getLogger(MailClient.class);
     @Autowired
     private JavaMailSender javaMailSender;
