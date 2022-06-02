@@ -5,14 +5,16 @@ import com.nowcoder.community.entity.Page;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityConstant;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +22,8 @@ import java.util.Map;
 public class LoginController {
     @Autowired
     private UserService userService;
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
     @RequestMapping(value = "/register",method = RequestMethod.GET)
     public String getRegisterPage(){ return "/site/register";}
     @RequestMapping(value = "/login",method = RequestMethod.GET)
@@ -53,7 +57,41 @@ public class LoginController {
             model.addAttribute("target","/index");
         }
         return "/site/operate-result";
+    }
+    @RequestMapping(path = "/login",method = RequestMethod.POST)
+    public String login(String username, String password, String code, boolean rememberme, Model model, HttpSession session, HttpServletResponse response){
+
+        System.out.println("login");
+        System.out.println(username);
+        System.out.println(password);
+        System.out.println(code);
+        String kaptcha = (String) session.getAttribute("kaptcha");
+        System.out.println(kaptcha);
+        if(StringUtils.isBlank(code)||StringUtils.isBlank(kaptcha)||!kaptcha.equals(code)){
+            model.addAttribute("codeMsg","验证码不正确！");
+            return "/site/login";
+        }
+        int i = rememberme ? CommunityConstant.REMEMBER_EXPIRED_SECONDS : CommunityConstant.DEFAULT_EXPIRED_SECONDS;
+        Map<String, Object> login = userService.login(username, password, i);
+        if(login.containsKey("ticket")){
+            Cookie cookie = new Cookie("ticket", login.get("ticket").toString());
+            cookie.setPath(contextPath);
+            cookie.setMaxAge(i);
+            response.addCookie(cookie);
+            return "redirect:/index";
+        }else {
+            model.addAttribute("usernameMsg",login.get("usernameMsg"));
+            model.addAttribute("passwordMsg",login.get("passwordMsg"));
+            return "/site/login";
+        }
 
     }
+    @RequestMapping(value = "/logout",method = RequestMethod.GET)
+    public String logout(@CookieValue("ticket") String ticket){
+        userService.LoginOut(ticket);
+        return "redirect:/login";
+    }
+
+
 
 }

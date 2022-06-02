@@ -70,7 +70,6 @@ public class HomeController {
         }catch (Exception e){
             System.out.println("发送图像失败"+e);
         }
-
     }
 
 }

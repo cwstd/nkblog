@@ -1,6 +1,8 @@
 package com.nowcoder.community.service.impl;
 
+import com.nowcoder.community.dao.LoginTicketMapper;
 import com.nowcoder.community.dao.UserMapper;
+import com.nowcoder.community.entity.LoginTicket;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityConstant;
@@ -29,6 +31,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private TemplateEngine templateEngine;
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
 
     @Value("${community.path.domain}")
     private String domain;
@@ -102,5 +106,46 @@ public class UserServiceImpl implements UserService {
             return CommunityConstant.ACTIVATE_SUCCESS;
         }
         return CommunityConstant.ACTIVATE_FAIL;
+    }
+
+    @Override
+    public Map<String, Object> login(String username, String password, int expiredSeconds) {
+        HashMap<String, Object> map = new HashMap<>();
+        if(StringUtils.isBlank(username)){
+            map.put("usernameMsg","用户名不能为空！");
+            return map;
+        }
+        if(StringUtils.isBlank(password)){
+            map.put("passwordMsg","密码不能为空！");
+            return map;
+        }
+        User user = userMapper.selectByName(username);
+        if(user==null){
+            map.put("username","账号不存在！");
+            return map;
+        }
+        if(user.getStatus()==0){
+            map.put("username","账号未激活！");
+        }
+        String s = CommunityUtil.md5(password + user.getSalt());
+        if(! s.equals(user.getPassword())){
+            map.put("passwordMsg","密码错误！");
+        }
+
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setUserId(user.getId());
+        loginTicket.setTicket(CommunityUtil.gennerateUUID());
+        loginTicket.setExpired(new Date(System.currentTimeMillis()+expiredSeconds*1000));
+        loginTicket.setStatus(0);
+        int i = loginTicketMapper.insertLoginTicket(loginTicket);
+        map.put("ticket",loginTicket.getTicket());
+
+        return map;
+    }
+
+    @Override
+    public int LoginOut(String ticket) {
+        int i = loginTicketMapper.updateStatus(ticket, 1);
+        return i;
     }
 }

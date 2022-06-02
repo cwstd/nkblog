@@ -31,4 +31,15 @@ public interface UserService {
      * @return
      */
     int activateUser(int userId, String activateCode);
+
+    /**
+     *
+     * @param username
+     * @param password
+     * @param expiredSeconds
+     * @return
+     */
+    Map<String,Object> login(String username,String password,int expiredSeconds);
+
+    int LoginOut(String ticket);
 }
