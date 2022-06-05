@@ -148,4 +148,9 @@ public class UserServiceImpl implements UserService {
         int i = loginTicketMapper.updateStatus(ticket, 1);
         return i;
     }
+
+    @Override
+    public LoginTicket selectTicket(String ticket) {
+        return loginTicketMapper.selectLoginTicket(ticket);
+    }
 }

@@ -1,6 +1,7 @@
 package com.nowcoder.community.service;
 
 import com.nowcoder.community.dao.UserMapper;
+import com.nowcoder.community.entity.LoginTicket;
 import com.nowcoder.community.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,5 +42,17 @@ public interface UserService {
      */
     Map<String,Object> login(String username,String password,int expiredSeconds);
 
+    /**
+     * 用户退出
+     * @param ticket
+     * @return
+     */
     int LoginOut(String ticket);
+
+    /**
+     * 查询ticket
+     * @param ticket
+     * @return
+     */
+    LoginTicket selectTicket(String ticket);
 }
