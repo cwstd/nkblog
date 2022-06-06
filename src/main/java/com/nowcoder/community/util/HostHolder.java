@@ -24,4 +24,6 @@ public class HostHolder {
         users.remove();
     }
 
+    public void setUser() {
+    }
 }

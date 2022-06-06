@@ -27,4 +27,16 @@ public interface DiscussPostService {
      */
     int findDiscussPostRows(int userId);
 
+    /**
+     * 添加帖子
+     * @param discussPost
+     */
+    int addDiscussPost(DiscussPost discussPost);
+
+    /***
+     * 查询一个文件
+     * @param id
+     * @return
+     */
+    DiscussPost selectDiscussPostOne(int id);
 }

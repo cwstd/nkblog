@@ -55,4 +55,20 @@ public interface UserService {
      * @return
      */
     LoginTicket selectTicket(String ticket);
+
+    /**
+     * 更新用户头像信息
+     * @param userId
+     * @param headerUrl
+     * @return
+     */
+    int updateHeader(int userId,String headerUrl);
+
+    /***
+     * 更新用户密码
+     * @param userId
+     * @param password
+     * @return
+     */
+    int updatePassword(int userId,String password);
 }
