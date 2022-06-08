@@ -3,10 +3,13 @@ package com.nowcoder.community.service.impl;
 import com.nowcoder.community.dao.MessageMapper;
 import com.nowcoder.community.entity.Message;
 import com.nowcoder.community.service.MessageService;
+import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class MessageServiceImpl implements MessageService {
     @Autowired
     private MessageMapper messageMapper;
@@ -32,6 +35,6 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public int findLettersUnreadCount(int userId, String conversationId) {
-        return 0;
+        return messageMapper.selectLettersUnreadCount(userId,conversationId);
     }
 }

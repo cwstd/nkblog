@@ -2,10 +2,11 @@ package com.nowcoder.community.service;
 
 import com.nowcoder.community.entity.Message;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Mapper
+@Service
 public interface MessageService {
     /**
      * 查询用户会话列表
@@ -24,7 +25,7 @@ public interface MessageService {
     int findConversationCount(int userId);
 
     /**
-     * 查询某个绘画包含的私信
+     * 查询某个会话包含的私信
      * @param conversationId
      * @param offset
      * @param limit
@@ -33,7 +34,7 @@ public interface MessageService {
     List<Message> findLetters(String conversationId,int offset,int limit);
 
     /**
-     * 查询某个绘画包含的私信数量
+     * 查询某个会话包含的私信数量
      * @param conversationId
      * @return
      */
