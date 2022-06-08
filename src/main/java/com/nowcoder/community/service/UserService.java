@@ -71,4 +71,6 @@ public interface UserService {
      * @return
      */
     int updatePassword(int userId,String password);
+
+    User findUserByName(String username);
 }
