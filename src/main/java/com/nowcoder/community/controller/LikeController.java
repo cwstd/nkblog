@@ -23,9 +23,9 @@ public class LikeController {
 
     @RequestMapping(path = "/like",method = RequestMethod.POST)
     @ResponseBody
-    public String like(int entityType,int entityId){
+    public String like(int entityType,int entityId,int entityUserId){
         User user = hostHolder.getUser();
-        likeService.like(user.getId(),entityType,entityId);
+        likeService.like(user.getId(),entityType,entityId,entityUserId);
         long likeCount = likeService.likeCount(entityType, entityId);
         int likeStatus = likeService.findUserLikeStatus(user.getId(), entityType, entityId);
         HashMap<String, Object> map = new HashMap<>();
@@ -33,4 +33,5 @@ public class LikeController {
         map.put("likeStatus",likeStatus);
         return CommunityUtil.getJsonString(0,null,map);
     }
+
 }
