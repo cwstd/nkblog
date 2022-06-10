@@ -71,4 +71,9 @@ public class MessageServiceImpl implements MessageService {
     public int findNoticeUnreadCount(int userId, String topic) {
         return messageMapper.selectNoticeUnreadCount(userId,topic);
     }
+
+    @Override
+    public List<Message> findNoties(int userId, String topic, int offset, int limit) {
+        return messageMapper.selectNotices(userId, topic, offset, limit);
+    }
 }

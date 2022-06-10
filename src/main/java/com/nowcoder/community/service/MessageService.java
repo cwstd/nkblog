@@ -81,4 +81,14 @@ public interface MessageService {
      */
     int findNoticeUnreadCount(int userId,String topic);
 
+    /***
+     * 获取通知
+     * @param userId
+     * @param topic
+     * @param offset
+     * @param limit
+     * @return
+     */
+    List<Message> findNoties(int userId,String topic,int offset,int limit);
+
 }

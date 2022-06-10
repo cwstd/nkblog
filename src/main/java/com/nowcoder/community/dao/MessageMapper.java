@@ -88,5 +88,13 @@ public interface MessageMapper {
      */
     int selectNoticeUnreadCount(int userId,String topic);
 
+   /***
+    * 查询
+    * @param userId
+    * @param topic
+    * @return
+    */
+   List<Message> selectNotices(int userId,String topic,int offset,int limit);
+
 
 }

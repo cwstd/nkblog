@@ -170,6 +170,32 @@ public class MessageController implements CommunityConstant {
         model.addAttribute("noticeUnreadCount",noticeUnreadCount);
         return"/site/notice";
     }
+    @RequestMapping(path = "/notice/detail/{topic}",method = RequestMethod.GET)
+    public String getNotices(@PathVariable("topic") String topic,Model model,Page page){
+        User user = hostHolder.getUser();
+        page.setLimit(5);
+        page.setPath("/notice/detail/"+topic);
+        page.setRows(messageService.findNoticeCount(user.getId(),topic));
+        List<Message> notiecs = messageService.findNoties(user.getId(), topic, page.getOffset(), page.getLimit());
+        List<Map<String,Object>> noticeVoList=new ArrayList<>();
+        for(Message message:notiecs){
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("notice",message);
+            String content = HtmlUtils.htmlUnescape(message.getContent());
+            HashMap data = JSONObject.parseObject(content, HashMap.class);
+            map.put("user",userService.findUserById((Integer) data.get("userId")));
+            map.put("entityType",data.get("entityType"));
+            map.put("entityId",data.get("entityId"));
+            map.put("postId",data.get("postId"));
+            map.put("fromUser",userService.findUserById(message.getFromId()));
+            noticeVoList.add(map);
+        }
+        model.addAttribute("notices",noticeVoList);
+        List<Integer> ids = findReadLetters(notiecs);
+        int i = messageService.readMessage(ids);
+        return "/site/notice-detail";
+
+    }
 
 
     /**
