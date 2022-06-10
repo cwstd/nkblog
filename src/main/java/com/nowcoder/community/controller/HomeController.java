@@ -11,7 +11,9 @@ import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
 import com.nowcoder.community.util.MailClient;
+import com.nowcoder.community.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,10 +23,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static com.nowcoder.community.util.CommunityConstant.ENTITY_TYPE_POST;
 
@@ -41,9 +45,11 @@ public class HomeController {
     @Autowired
     private Producer kaptchaProduce;
     @Autowired
-    private HostHolder hostHolder;
-    @Autowired
     private LikeService likeService;
+    @Autowired
+    private RedisTemplate redisTemplate;
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
 
     @RequestMapping(path = "/index", method = RequestMethod.GET)
     public String getIndexPage(Model model, Page page) {
@@ -74,7 +80,15 @@ public class HomeController {
     public void getKaptcha(HttpServletResponse response, HttpSession session){
         String text = kaptchaProduce.createText();
         BufferedImage image = kaptchaProduce.createImage(text);
-        session.setAttribute("kaptcha",text);
+//        session.setAttribute("kaptcha",text);
+        String kaptchaowner = CommunityUtil.gennerateUUID();
+        Cookie cookie = new Cookie("kaptchaowner", kaptchaowner);
+        cookie.setMaxAge(60);
+        cookie.setPath(contextPath);
+        response.addCookie(cookie);
+        //验证码存入Redis
+        String kaptchaKey = RedisKeyUtil.getKaptcha(kaptchaowner);
+        redisTemplate.opsForValue().set(kaptchaKey,text,60, TimeUnit.SECONDS);
         response.setContentType("image/png");
         try{
             ServletOutputStream outputStream = response.getOutputStream();

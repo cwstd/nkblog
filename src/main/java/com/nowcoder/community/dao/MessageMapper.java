@@ -1,5 +1,6 @@
 package com.nowcoder.community.dao;
 
+import com.nowcoder.community.entity.Comment;
 import com.nowcoder.community.entity.Message;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -62,4 +63,30 @@ public interface MessageMapper {
      * @return
      */
     int updateMessageStatus(List<Integer> ids,int status);
+
+    /**
+     * 查询最新的通知
+     * @param userId
+     * @param topic
+     * @return
+     */
+    Message selectLatestNotice(int userId,String topic);
+
+    /**
+     * 查询通知数量
+     * @param userId
+     * @param topic
+     * @return
+     */
+    int selectNoticeCount(int userId,String topic);
+
+    /**
+     * 查询未读数量
+     * @param userId
+     * @param topic
+     * @return
+     */
+    int selectNoticeUnreadCount(int userId,String topic);
+
+
 }

@@ -5,9 +5,11 @@ import com.nowcoder.community.entity.Page;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityConstant;
+import com.nowcoder.community.util.RedisKeyUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,8 @@ public class LoginController {
     private UserService userService;
     @Value("${server.servlet.context-path}")
     private String contextPath;
+    @Autowired
+    private RedisTemplate redisTemplate;
     @RequestMapping(value = "/register",method = RequestMethod.GET)
     public String getRegisterPage(){ return "/site/register";}
     @RequestMapping(value = "/login",method = RequestMethod.GET)
@@ -59,13 +63,20 @@ public class LoginController {
         return "/site/operate-result";
     }
     @RequestMapping(path = "/login",method = RequestMethod.POST)
-    public String login(String username, String password, String code, boolean rememberme, Model model, HttpSession session, HttpServletResponse response){
+    public String login(String username, String password, String code, boolean rememberme, Model model, HttpSession session,@CookieValue("kaptchaowner") String kaptchaowner, HttpServletResponse response){
 
         System.out.println("login");
         System.out.println(username);
         System.out.println(password);
         System.out.println(code);
-        String kaptcha = (String) session.getAttribute("kaptcha");
+        if(StringUtils.isBlank(kaptchaowner)){
+            model.addAttribute("codeMsg","验证码已经失效！");
+            return "/site/login";
+        }
+        String kaptchaKey = RedisKeyUtil.getKaptcha(kaptchaowner);
+        String kaptcha =(String) redisTemplate.opsForValue().get(kaptchaKey);
+        //String kaptcha = (String) session.getAttribute("kaptcha");
+        //从redis取验证码
         System.out.println(kaptcha);
         if(StringUtils.isBlank(code)||StringUtils.isBlank(kaptcha)||!kaptcha.equals(code)){
             model.addAttribute("codeMsg","验证码不正确！");

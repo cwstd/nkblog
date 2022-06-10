@@ -1,5 +1,6 @@
 package com.nowcoder.community.service;
 
+import com.nowcoder.community.entity.Comment;
 import com.nowcoder.community.entity.Message;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Service;
@@ -55,6 +56,29 @@ public interface MessageService {
      */
     int addMessage(Message message);
 
+    /**
+     * 查询消息
+     * @param ids
+     * @return
+     */
     int readMessage(List<Integer> ids);
+
+    Message findLatestNotice(int userId,String topic);
+
+    /**
+     * 查询通知数量
+     * @param userId
+     * @param topic
+     * @return
+     */
+    int findNoticeCount(int userId,String topic);
+
+    /**
+     * 查询未读数量
+     * @param userId
+     * @param topic
+     * @return
+     */
+    int findNoticeUnreadCount(int userId,String topic);
 
 }

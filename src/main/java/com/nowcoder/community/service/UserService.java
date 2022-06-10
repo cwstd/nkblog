@@ -72,5 +72,10 @@ public interface UserService {
      */
     int updatePassword(int userId,String password);
 
+    /***
+     * 从用户名查询User
+     * @param username
+     * @return
+     */
     User findUserByName(String username);
 }

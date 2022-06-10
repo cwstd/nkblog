@@ -1,10 +1,13 @@
 package com.nowcoder.community.controller;
 
 
+import com.nowcoder.community.entity.Event;
 import com.nowcoder.community.entity.Page;
 import com.nowcoder.community.entity.User;
+import com.nowcoder.community.event.EventProducer;
 import com.nowcoder.community.service.FollowService;
 import com.nowcoder.community.service.UserService;
+import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +24,14 @@ import java.util.Map;
 import static com.nowcoder.community.util.CommunityConstant.ENTITY_TYPE_USER;
 
 @Controller
-public class FollowController {
+public class FollowController implements CommunityConstant {
 
     @Autowired
     private FollowService followService;
     @Autowired
     private HostHolder hostHolder;
+    @Autowired
+    private EventProducer eventProducer;
     @Autowired
     private UserService userService;
     @RequestMapping(path = "/follow",method = RequestMethod.POST)
@@ -37,6 +42,14 @@ public class FollowController {
             return CommunityUtil.getJsonString(0,"请登录！");
         }
         followService.Follow(user.getId(),entityType,entityId);
+        Event event = new Event();
+        event.setTopic(TOPIC_FOLLOW)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(entityType)
+                .setEntityId(entityId)
+                .setEntityUserId(entityId);
+        eventProducer.fireEvent(event);
+
         return CommunityUtil.getJsonString(1,"关注成功！");
     }
     @RequestMapping(path = "/unfollow",method = RequestMethod.POST)
