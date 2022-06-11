@@ -2,14 +2,13 @@ package com.nowcoder.community.controller;
 
 import com.nowcoder.community.dao.CommentMapper;
 import com.nowcoder.community.dao.DiscussPostMapper;
-import com.nowcoder.community.entity.Comment;
-import com.nowcoder.community.entity.DiscussPost;
-import com.nowcoder.community.entity.Page;
-import com.nowcoder.community.entity.User;
+import com.nowcoder.community.entity.*;
+import com.nowcoder.community.event.EventProducer;
 import com.nowcoder.community.service.CommentService;
 import com.nowcoder.community.service.DiscussPostService;
 import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
+import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ import static com.nowcoder.community.util.CommunityConstant.ENTITY_TYPE_POST;
 
 @Controller
 @RequestMapping("/discuss")
-public class DiscussPostController {
+public class DiscussPostController implements CommunityConstant {
 
     @Autowired
     private HostHolder hostHolder;
@@ -39,6 +38,8 @@ public class DiscussPostController {
     private CommentService commentService;
     @Autowired
     private LikeService likeService;
+    @Autowired
+    private EventProducer eventProducer;
     @ResponseBody
     @RequestMapping(path = "/add",method = RequestMethod.POST)
     public String addDiscussPost(String title,String content){
@@ -55,6 +56,11 @@ public class DiscussPostController {
         discussPost.setCreateTime(new Date());
         discussPost.setUserId(user.getId());
         discussPostService.addDiscussPost(discussPost);
+        //出发发帖时间
+        Event event = new Event().setTopic(TOPIC_PUBLISH)
+                .setUserId(user.getId()).setEntityId(ENTITY_TYPE_POST).setEntityId(discussPost.getId());
+        eventProducer.fireEvent(event);
+
         return CommunityUtil.getJsonString(0,"发布成功！");
     }
     @RequestMapping(path = "/detail/{discussPostId}",method = RequestMethod.GET)
