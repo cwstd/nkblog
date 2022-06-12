@@ -4,8 +4,10 @@ import com.nowcoder.community.dao.UserMapper;
 import com.nowcoder.community.entity.LoginTicket;
 import com.nowcoder.community.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Map;
 
 
@@ -13,6 +15,7 @@ public interface UserService {
 
     /**
      * 查询用户
+     *
      * @param id
      * @return
      */
@@ -20,13 +23,15 @@ public interface UserService {
 
     /**
      * 注册功能
+     *
      * @param user
      * @return
      */
-    Map<String,Object> register(User user);
+    Map<String, Object> register(User user);
 
     /**
      * 激活账户
+     *
      * @param userId
      * @param activateCode
      * @return
@@ -34,16 +39,16 @@ public interface UserService {
     int activateUser(int userId, String activateCode);
 
     /**
-     *
      * @param username
      * @param password
      * @param expiredSeconds
      * @return
      */
-    Map<String,Object> login(String username,String password,int expiredSeconds);
+    Map<String, Object> login(String username, String password, int expiredSeconds);
 
     /**
      * 用户退出
+     *
      * @param ticket
      * @return
      */
@@ -51,6 +56,7 @@ public interface UserService {
 
     /**
      * 查询ticket
+     *
      * @param ticket
      * @return
      */
@@ -58,11 +64,12 @@ public interface UserService {
 
     /**
      * 更新用户头像信息
+     *
      * @param userId
      * @param headerUrl
      * @return
      */
-    int updateHeader(int userId,String headerUrl);
+    int updateHeader(int userId, String headerUrl);
 
     /***
      * 更新用户密码
@@ -70,7 +77,7 @@ public interface UserService {
      * @param password
      * @return
      */
-    int updatePassword(int userId,String password);
+    int updatePassword(int userId, String password);
 
     /***
      * 从用户名查询User
@@ -78,4 +85,7 @@ public interface UserService {
      * @return
      */
     User findUserByName(String username);
+
+    Collection<? extends GrantedAuthority> grantedAuthorities(int userId);
+
 }
