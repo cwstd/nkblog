@@ -49,5 +49,8 @@
     <update id="updateType">
         update discuss_post set type=#{type} where  id=#{id};
     </update>
+    <update id="updateScore">
+        update discuss_post set score=#{score} where  id=#{id};
+    </update>
 
 </mapper>

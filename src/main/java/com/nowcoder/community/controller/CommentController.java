@@ -9,7 +9,9 @@ import com.nowcoder.community.service.CommentService;
 import com.nowcoder.community.service.DiscussPostService;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.HostHolder;
+import com.nowcoder.community.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +31,8 @@ public class CommentController implements CommunityConstant {
     private CommentService commentService;
     @Autowired
     private DiscussPostService discussPostService;
+    @Autowired
+    private RedisTemplate redisTemplate;
     @RequestMapping(value = "add/{disscussPostId}",method = RequestMethod.POST)
     public String addComment(@PathVariable("disscussPostId") int disscussPostId, Comment comment){
         comment.setCreateTime(new Date());
@@ -44,6 +48,9 @@ public class CommentController implements CommunityConstant {
         if(comment.getEntityType()==ENTITY_TYPE_POST){
             DiscussPost discussPost = discussPostService.selectDiscussPostOne(comment.getEntityId());
             event.setEntityUserId(discussPost.getUserId());
+            String postscoreKey = RedisKeyUtil.getPostscoreKey();
+            redisTemplate.opsForSet().add(postscoreKey,comment.getId());
+
         }else if(comment.getEntityType()==ENTITY_TYPE_COMMENT){
             Comment comment1 = commentService.findCommentById(comment.getEntityId());
             event.setEntityUserId(comment1.getUserId());

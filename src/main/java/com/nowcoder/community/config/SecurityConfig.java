@@ -43,7 +43,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Comm
                 AUTHORITY_USER,
                 AUTHORITY_ADMIN,
                 AUTHORITY_MODERATOE
-        ).anyRequest().permitAll();
+        ).antMatchers(
+                "/discuss/top",
+                "/discuss/wonderful"
+        ).hasAnyAuthority(
+                AUTHORITY_MODERATOE
+        ).antMatchers(
+                "/discuss/delete"
+        ).hasAnyAuthority(
+                AUTHORITY_ADMIN
+        ).anyRequest().permitAll()
+        .and().csrf().disable();
         http.exceptionHandling()
                 .authenticationEntryPoint(new AuthenticationEntryPoint() {
                     //没有登陆

@@ -67,4 +67,10 @@ public class ElasticsearchTest {
 
     }
 
+    @Test
+    public void Elasticsearchclear(){
+       discussPostRepository.deleteAll();
+
+    }
+
 }

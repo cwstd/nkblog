@@ -11,7 +11,9 @@ import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
+import com.nowcoder.community.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,6 +42,8 @@ public class DiscussPostController implements CommunityConstant {
     private LikeService likeService;
     @Autowired
     private EventProducer eventProducer;
+    @Autowired
+    private RedisTemplate redisTemplate;
     @ResponseBody
     @RequestMapping(path = "/add",method = RequestMethod.POST)
     public String addDiscussPost(String title,String content){
@@ -60,6 +64,9 @@ public class DiscussPostController implements CommunityConstant {
         Event event = new Event().setTopic(TOPIC_PUBLISH)
                 .setUserId(user.getId()).setEntityId(ENTITY_TYPE_POST).setEntityId(discussPost.getId());
         eventProducer.fireEvent(event);
+        String postscoreKey = RedisKeyUtil.getPostscoreKey();
+        redisTemplate.opsForSet().add(postscoreKey,discussPost.getId());
+
 
         return CommunityUtil.getJsonString(0,"发布成功！");
     }
@@ -154,6 +161,8 @@ public class DiscussPostController implements CommunityConstant {
         Event event = new Event().setTopic(TOPIC_PUBLISH)
                 .setUserId(hostHolder.getUser().getId()).setEntityId(ENTITY_TYPE_POST).setEntityId(id);
         eventProducer.fireEvent(event);
+        String postscoreKey = RedisKeyUtil.getPostscoreKey();
+        redisTemplate.opsForSet().add(postscoreKey,id);
         return CommunityUtil.getJsonString(0,"加精成功！");
     }
 

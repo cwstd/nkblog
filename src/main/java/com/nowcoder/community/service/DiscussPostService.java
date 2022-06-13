@@ -64,4 +64,6 @@ public interface DiscussPostService {
      * @return
      */
     int ReType(int id,int type);
+
+    int updateScore(int id,double score);
 }

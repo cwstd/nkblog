@@ -41,5 +41,6 @@ public interface DiscussPostMapper {
      * @return
      */
     int updateType(int id,int type);
+    int updateScore(int id,double score);
 
 }
