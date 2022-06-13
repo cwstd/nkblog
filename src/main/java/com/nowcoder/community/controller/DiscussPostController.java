@@ -137,4 +137,34 @@ public class DiscussPostController implements CommunityConstant {
 
         return "/site/discuss-detail";
     }
+    @RequestMapping(path = "/top",method = RequestMethod.POST)
+    @ResponseBody
+    public String setTop(int id){
+        discussPostService.ReType(id,1);
+        Event event = new Event().setTopic(TOPIC_PUBLISH)
+                .setUserId(hostHolder.getUser().getId()).setEntityId(ENTITY_TYPE_POST).setEntityId(id);
+        eventProducer.fireEvent(event);
+        return CommunityUtil.getJsonString(0,"置顶成功！");
+    }
+
+    @RequestMapping(path = "/wondelful",method = RequestMethod.POST)
+    @ResponseBody
+    public String setWondeful(int id){
+        discussPostService.ReStatus(id,1);
+        Event event = new Event().setTopic(TOPIC_PUBLISH)
+                .setUserId(hostHolder.getUser().getId()).setEntityId(ENTITY_TYPE_POST).setEntityId(id);
+        eventProducer.fireEvent(event);
+        return CommunityUtil.getJsonString(0,"加精成功！");
+    }
+
+    @RequestMapping(path = "/delete",method = RequestMethod.POST)
+    @ResponseBody
+    public String setDelete(int id){
+        discussPostService.ReStatus(id,1);
+        Event event = new Event().setTopic(TOPIC_PUBLISH)
+                .setUserId(hostHolder.getUser().getId()).setEntityId(ENTITY_TYPE_POST).setEntityId(id);
+        eventProducer.fireEvent(event);
+        return CommunityUtil.getJsonString(0,"加精成功！");
+    }
+
 }

@@ -26,4 +26,20 @@ public interface DiscussPostMapper {
      */
     int updateDiscussCommentCount(int id,int commentCount);
 
+    /***
+     * 更新帖子状态
+     * @param id
+     * @param status
+     * @return
+     */
+    int updateStatus(int id, int status);
+
+    /**
+     * 更新帖子加精
+     * @param id
+     * @param status
+     * @return
+     */
+    int updateType(int id,int type);
+
 }
