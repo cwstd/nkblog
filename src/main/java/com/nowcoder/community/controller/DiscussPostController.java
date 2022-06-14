@@ -66,8 +66,6 @@ public class DiscussPostController implements CommunityConstant {
         eventProducer.fireEvent(event);
         String postscoreKey = RedisKeyUtil.getPostscoreKey();
         redisTemplate.opsForSet().add(postscoreKey,discussPost.getId());
-
-
         return CommunityUtil.getJsonString(0,"发布成功！");
     }
     @RequestMapping(path = "/detail/{discussPostId}",method = RequestMethod.GET)

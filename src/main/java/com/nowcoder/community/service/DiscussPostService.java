@@ -18,7 +18,7 @@ public interface DiscussPostService {
      * @param limit
      * @return
      */
-    List<DiscussPost> findDiscussPosts(int userId, int offset, int limit);
+    List<DiscussPost> findDiscussPosts(int userId, int offset, int limit,int orderMode);
 
     /**
      * 查询总页数
